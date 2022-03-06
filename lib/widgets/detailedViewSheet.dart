@@ -1,6 +1,10 @@
+import 'package:avatar_glow/avatar_glow.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:today/functions/db_functions.dart';
+import 'package:today/model/data_model.dart';
 
-showDetailedViewofTask(BuildContext ctx, int key) async {
+showDetailedViewofTask(BuildContext ctx, ItemModel item) async {
   showModalBottomSheet(
       context: ctx,
       builder: (ctx) {
@@ -10,21 +14,38 @@ showDetailedViewofTask(BuildContext ctx, int key) async {
             child: Column(
               children: [
                 Expanded(
+                    flex: 1,
+                    child: Visibility(
+                        visible: item.isCompleted,
+                        child: AvatarGlow(
+                          endRadius: 1000,
+                          showTwoGlows: false,
+                          animate: true,
+                          glowColor: Colors.green,
+                          child: Icon(
+                            Icons.done_outline_rounded,
+                            color: Colors.green,
+                          ),
+                        ))),
+                Expanded(
                   flex: 1,
                   child: Text(
-                    "Title",
-                    style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+                    item.title,
+                    style: const TextStyle(
+                        fontSize: 30, fontWeight: FontWeight.bold),
                   ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Expanded(
                   flex: 2,
-                  child: Text(
-                      "description description description description description\ndescriptiondescriptiondescription"),
+                  child: Padding(
+                    padding: const EdgeInsets.all(12.0),
+                    child: Text(item.description),
+                  ),
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 30,
                 ),
                 Expanded(
@@ -33,16 +54,24 @@ showDetailedViewofTask(BuildContext ctx, int key) async {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: Icon(Icons.done),
-                          label: Text("done")),
-                      SizedBox(
+                        // done button
+                        onPressed: () {
+                          taskCompleted(item);
+                        },
+                        icon: Icon(
+                          Icons.done,
+                        ),
+                        label: const Text("done"),
+                      ),
+                      const SizedBox(
                         width: 30,
                       ),
                       ElevatedButton.icon(
-                          onPressed: () {},
-                          icon: Icon(Icons.cancel),
-                          label: Text("cancel")),
+                          onPressed: () {
+                            Navigator.of(ctx).pop();
+                          },
+                          icon: const Icon(Icons.cancel),
+                          label: const Text("cancel")),
                     ],
                   ),
                 )
@@ -51,4 +80,11 @@ showDetailedViewofTask(BuildContext ctx, int key) async {
           ),
         );
       });
+}
+
+taskCompleted(ItemModel item) async {
+  if (item.isCompleted == true) {
+    return;
+  }
+  markAsCompleted(item);
 }

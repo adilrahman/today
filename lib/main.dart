@@ -1,8 +1,19 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:today/functions/db_functions.dart';
 import 'package:today/screens/edit_page.dart';
 import 'package:today/screens/home_page.dart';
 
-void main() {
+import 'model/data_model.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+
+  if (!Hive.isAdapterRegistered(ItemModelAdapter().typeId)) {
+    Hive.registerAdapter(ItemModelAdapter());
+  }
+  getAllItems();
   runApp(const MyApp());
 }
 
